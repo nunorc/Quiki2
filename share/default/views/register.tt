@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col s6">
+	<h2>Register</h2>
+	<div class="card">
+	  <div class="card-content">
+		<form role="form" method="post">
+		  <div class="input-field">
+			<input id="email" type="text" class="validate" name="username">
+			<label for="username">Username</label>
+		  </div>
+		  <div class="input-field">
+			<input id="email" type="text" class="validate" name="email">
+			<label for="email">E-mail</label>
+		  </div>
+		  <div class="input-field">
+			<input id="password" type="password" class="validate" name="password">
+			<label for="password">Password</label>
+		  </div>
+		  <div class="input-field">
+			<input id="password" type="password" class="validate" name="repeat">
+			<label for="password">Repeat</label>
+		  </div>
+		  <button class="btn waves-effect waves-light orange darken-1" type="submit"><i class="material-icons">send</i></button>
+		</form>
+	  </div>
+	</div>
+  </div>
+</div>

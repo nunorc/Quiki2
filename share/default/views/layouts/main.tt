@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="[% settings.charset %]">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Quiki2</title>
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <link rel="stylesheet" href="[% request.uri_base %]/css/style.css">
+  <link rel="shortcut icon" href="[% request.uri_base %]/images/favicon.ico"/>
+</head>
+<body>
+
+  <nav class="orange darken-1" role="navigation">
+	<div class="nav-wrapper container">
+	  <a href="/" class="brand-logo white-text"><img style="height: 40px; vertical-align: middle;" src="[% request.uri_base %]/images/logo.png"> Quiki2</a>
+	  <ul class="right">
+        [% IF session.user.defined %]
+		  <li><a class="white-text" href="#">[% session.user.username %]</a></li>
+		<li><a class="white-text" href="/logout">Logout</a></li>
+        [% ELSE %]
+		  <li><a class="white-text" href="/login">Login</a></li>
+		  <li><a class="white-text" href="/register">Register</a></li>
+        [% END %]
+	  </ul>
+	</div>
+  </nav>
+
+  <main>
+    <div class="container q2content">
+      [% content %]
+    </div>
+  </main>
+
+  <footer class="page-footer grey darken-2">
+    <div class="fixed-action-btn horizontal fab">
+      <a class="btn-floating btn-large orange darken-1">
+        <i class="large mdi-navigation-menu"></i>
+      </a>
+      <ul>
+        <li><a class="btn-floating orange darken-1 disabled"><i class="material-icons">add</i></a></li>
+        <li><a class="btn-floating orange darken-1 [% UNLESS session.user -%]disabled[%- END %]" alt="edit" title="Edit" href="[% editme %]"><i class="material-icons">create</i></a></li>
+        <li><a class="btn-floating orange darken-1 disabled"><i class="material-icons">attach_file</i></a></li>
+        <li><a class="btn-floating orange darken-1 disabled"><i class="material-icons">delete</i></a></li>
+      </ul>
+    </div>
+    <div class="container">
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+        <span>©2015 Quiki2, All rights reserved</span>
+        <span class="bullet">•</span>
+        <span class="">Powered by <a class="" href="http://perldancer.org/">Dancer</a> and <a class="" href="http://materializecss.com">Materialize</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</body>
+</html>

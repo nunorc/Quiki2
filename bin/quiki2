@@ -1,0 +1,10 @@
+#!/usr/bin/env perl
+# PODNAME: quiki2
+# ABSTRACT: quiki2 command line interface
+
+use strict;
+use warnings;
+use Quiki2::CLI;
+
+exit Quiki2::CLI->run;
+
