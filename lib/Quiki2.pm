@@ -19,17 +19,6 @@ sub page {
   return $p;
 }
 
-sub edit {
-  my ($self, $id) = @_;
-
-  # FIXME
-  my $filename = File::Spec->catfile($self->data, 'content', $id);
-  my $file = path($filename);
-  my $raw = $file->slurp_utf8;
-
-  return { id => $id, raw => $raw };
-}
-
 sub _set_data {
   my $self = shift;
 

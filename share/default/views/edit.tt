@@ -1,11 +1,20 @@
-<h2>Edit: [% id %]</h2>
+<h2>Edit: [% meta.title %]</h2>
 <div class="card">
   <div class="card-content">
     <form role="form" method="post">
+      <h4>Meta</h4>
+      [% FOREACH k IN meta.keys.sort %]
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="meta-[%- k -%]" type="text" name="meta-[%- k -%]" value="[% meta.item(k) %]">
+            <label for="meta-[%- k -%]">[% k | ucfirst %]</label>
+          </div>
+        </div>
+      [% END %]
+      <h4>Content</h4>
       <div class="row">
         <div class="input-field col s12">
-          <textarea id="textarea1" name="content" class="materialize-textarea">[% raw %]</textarea>
-          <label for="textarea1">Markdown Content</label>
+          <textarea id="textarea1" name="content" class="materialize-textarea">[% content %]</textarea>
         </div>
       </div>
       <button class="btn waves-effect waves-light orange darken-1" type="submit">Save</button>
@@ -14,4 +23,3 @@
   </div>
  </div>
 </div>
-

@@ -2,7 +2,7 @@ package Quiki2::App;
 use Dancer2;
 
 use Quiki2;
-use Data::Dumper;
+use POSIX qw(strftime);
 
 our $VERSION = '0.1';
 
@@ -54,10 +54,8 @@ get '/p/:id' => sub {
   my $p = $quiki2->page($id);
 
   template 'page' => {
-    title => $p->meta->{title},
+    meta    => $p->meta,
     content => $p->to_html,
-    when => $p->meta->{when},
-    who => $p->meta->{who},
     editme => '/e/'.$p->id
   };
 };
@@ -65,21 +63,27 @@ get '/p/:id' => sub {
 get '/e/:id' => sub {
   my $id = param('id');
 
-  my $p = $quiki2->edit($id);
+  my $p = $quiki2->page($id);
+  my $meta = {
+    title => $p->meta->{title},
+    who   => session('user')->{email},
+    when  => strftime("%h %d, %Y", localtime)
+  };
 
   template 'edit' => {
-    id  => $p->{id},
-    raw => $p->{raw},
+    id      => $p->id,
+    meta    => $meta,
+    content => $p->content
   };
 };
 
 post '/e/:id' => sub {
   my $id = param('id');
-  my $content = param('content');
+  my $params = params;
 
   my $p = $quiki2->page($id);
   my $user = session 'user';
-  $p->save($user, $content);
+  $p->save($user, $params);
 
   redirect "/p/$id";
 };

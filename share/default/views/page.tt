@@ -1,16 +1,16 @@
-<h2>[% title %]</h2>
+<h2>[% meta.title %]</h2>
 <div class="card">
   <div class="card-content">
 	[% content %]
   </div>
-  [% IF when AND who %]
+  [% IF meta.when AND meta.who %]
 	<div class="divider"></div>
 	<div class="row" style="color: #bbb;">
 	 <div class="col s6" class="left-align">
-	   <div style="padding: 6px 12px;">[% when %]</div>
+	   <div style="padding: 6px 12px;">[% meta.when %]</div>
 	 </div>
 	 <div class="col s6">
-	   <div style="padding: 6px 12px;" class="right-align">[% who %]</div>
+	   <div style="padding: 6px 12px;" class="right-align">[% meta.who %]</div>
 	 </div>
   [% END %]
  </div>

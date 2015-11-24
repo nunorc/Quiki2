@@ -8,8 +8,8 @@ use JSON::XS;
 use DR::SunDown;
 use POSIX qw(strftime);
 
-has 'quiki2'   => ( is => 'rw' );
-has 'id'       => ( is => 'rw' );
+has 'quiki2'   => ( is => 'ro' );
+has 'id'       => ( is => 'ro' );
 has 'meta'     => ( is => 'lazy', builder => '_get_meta' );
 has 'content'  => ( is => 'lazy', builder => '_get_content' );
 
@@ -31,17 +31,22 @@ sub to_html {
 }
 
 sub save {
-  my ($self, $user, $content) = @_;
+  my ($self, $user, $args) = @_;
 
   # update meta
-  $self->meta->{who} = $user->{email};
-  my $json = encode_json $self->meta;
+  my $meta = {};
+  for (keys %$args) {
+    my ($l, $r) = split /\s*\-\s*/, $_;
+    if ($l eq 'meta') {
+      $meta->{$r} = $args->{$_};
+    }
+  }
   my $file = path($self->filename('meta'));
-  $file->spew_utf8($json);
+  $file->spew_utf8(encode_json $meta);
 
   # save content
   $file = path($self->filename('content'));
-  $file->spew_utf8($content);
+  $file->spew_utf8($args->{content});
 }
 
 sub _get_content {
