@@ -4,6 +4,7 @@ package Quiki2::Page;
 use Moo;
 use Path::Tiny;
 use File::Spec;
+use JSON::XS;
 use DR::SunDown;
 use POSIX qw(strftime);
 
@@ -11,59 +12,69 @@ has 'quiki2'   => ( is => 'rw' );
 has 'id'       => ( is => 'rw' );
 has 'meta'     => ( is => 'lazy', builder => '_get_meta' );
 has 'content'  => ( is => 'lazy', builder => '_get_content' );
-has 'filename' => ( is => 'lazy', builder => '_set_filename' );
+
+sub filename {
+  my ($self, $dir) = @_;
+
+  my $data = $self->quiki2->data;
+  my $filename = File::Spec->catfile($data, $dir, $self->id);
+
+  return $filename;
+}
+
+sub to_html {
+  my ($self) = @_;
+
+  my $html = markdown2html($self->content);
+
+  return $html;
+}
 
 sub save {
-  my ($self, $user, $raw) = @_;
+  my ($self, $user, $content) = @_;
 
-  $raw =~ s/^\-\-\-/---\nwho: $user->{email}/; # FIXME
+  # update meta
+  $self->meta->{who} = $user->{email};
+  my $json = encode_json $self->meta;
+  my $file = path($self->filename('meta'));
+  $file->spew_utf8($json);
 
-  open my $fh, '>', $self->filename;
-  print $fh $raw;
-  close $fh;
-
+  # save content
+  $file = path($self->filename('content'));
+  $file->spew_utf8($content);
 }
 
 sub _get_content {
   my $self = shift;
 
-  my $file = path($self->filename);
-  my $markdown = $file->slurp_utf8;
-  $markdown =~ s/\-\-\-.*?\-\-\-//s;
-  my $content = markdown2html($markdown);
+  my $file = path($self->filename('content'));
+  my $content = $file->slurp_utf8;
 
   return $content;
 }
 
 sub _get_meta {
   my $self = shift;
+
+  # defaults
   my $meta = { title => ucfirst($self->id), who => 'Anonymous' };
 
-  open my $fh, '<', $self->filename;
-  my $first = <$fh>;
-  if ($first =~  m/^\s*\-\-\-/) {
-    while (my $line = <$fh>) {
-      if ($line =~ m/\s*(\w+)\s*\:\s*(.*)/) {
-        $meta->{$1} = $2;
-      }
-      last if ($line =~  m/^\s*\-\-\-/);
-    }
+  # get meta from file if available
+  my $file = path($self->filename('meta'));
+  if ($file->exists) {
+	my $json = $file->slurp_utf8;
+	my $data = decode_json $json;
+	foreach (keys %$data) {
+	  $meta->{$_} = $data->{$_};
+	}
   }
-  close $fh;
 
-  my @stats = stat($self->filename);
-  $meta->{'when'} = strftime "%h %d, %Y", localtime($stats[9]);
+  unless (exists $meta->{when}) {
+    my @stats = stat($self->filename('content'));
+    $meta->{'when'} = strftime "%h %d, %Y", localtime($stats[9]);
+  }
 
   return $meta;
-}
-
-sub _set_filename {
-  my $self = shift;
-
-  my $data = $self->quiki2->data;
-  my $filename = File::Spec->catfile($data, 'content', $self->id);
-
-  return $filename;
 }
 
 1;

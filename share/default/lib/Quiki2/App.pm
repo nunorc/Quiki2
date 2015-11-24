@@ -55,7 +55,7 @@ get '/p/:id' => sub {
 
   template 'page' => {
     title => $p->meta->{title},
-    content => $p->content,
+    content => $p->to_html,
     when => $p->meta->{when},
     who => $p->meta->{who},
     editme => '/e/'.$p->id
